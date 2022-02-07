@@ -13,18 +13,28 @@ knitr::opts_chunk$set(echo = TRUE)
 
 A **data frame** is used for storing data tables. It a list a vector of equal length. 
 
+Special property: more general structures. You can have a combination of different modes.
+
 When we import data to R, data frame is the preferred way for storing the data because columns can have different modes (character, numeric, integer, logical, complex).
 
+ONE RESTRICTION - all of the columns need to have the same number of rows.
 
 ## Data frame built-in example
 
 Let's look into a built-in data frame from package "datasets" - cars. The data give the speed of cars and the distances taken to stop.
+
+* code chunks can be added using the green button. You can use the drop down menu to add different types of code, but you must have that code language installed to run it.
+
+(cars is a pre-installed dataset in R)
 
 ```{r cars}
 cars
 ```
 
 Note that it has 2 columns and 50 rows.
+
+We can tell that this is a data frame by its layout
+dbl - means that it is a real number (can have decimal points)
 
 ## Data frame columns
 
@@ -34,6 +44,8 @@ Suppose you want just the column speed. How would you access that data?
 cars$speed
 ```
 
+*R will auto-populate the data sets that are available within that dataframe
+
 How would you store it on another object?
 
 ```{r}
@@ -41,10 +53,14 @@ car_speed <- cars$speed
 car_speed
 ```
 
+<- is the assign symbol
+command + return runs the single line
 
 ## Transforming object in a data frame
 
 Is the new object you create a data frame?
+The following commands are 2 ways you can check whether or not the object is a dataframe
+
 ```{r}
 #Option 1
 class(car_speed)
@@ -54,12 +70,17 @@ is.data.frame(car_speed)
 ```
 
 How could you make it a data frame?
+1. create new object using <-
+2. call a function using the function name
+3. put the object 
 
 ```{r}
 df_car_speed <- as.data.frame(car_speed)
 df_car_speed
 class(df_car_speed)
 ```
+
+object name was assigned as the column name within the new dataframe
 
 ## Adding columns to a data frame
 
@@ -81,6 +102,10 @@ df_opt2
 
 ```
 
+* cbind will only work if both objects have the same number of rows
+* rbind could be used if you want to add a few new observations to an existing dataset (bc downloading big datasets could take time)
+* good practice to turn objects into dataframe before cbind because if it is a matrix (as opposed to a vector) it might not merge correctly
+
 Note that when we transformed the vector in a data frame the name of the vector became the column name.
 
 ```{r}
@@ -91,6 +116,8 @@ names(df)
 ## Creating a data frame
 
 How would you create a data frame?
+
+* the following function allows you to name the column
 
 ```{r}
 #useful function data.frame()
@@ -104,16 +131,22 @@ create_df
 Some useful functions to use with data frames.
 
 ```{r}
-ncol(df)  
-nrow(df)  
-length(df)  #same as ncol
-summary(df)
+ncol(df)  #number of columns
+nrow(df)  #number of rows
+length(df)  #same as ncol - might seem like number of rows but in df - it is number of columns
+summary(df) #summary statistics of columns
 head(df) #show the first 6 rows of df
+# sometimes you might want to look at the tail of the data (in case the last row of the data is some sort of data summary)
 
-#If you know the number of the column you want you can refer to that to access column
+# If you know the number of the column you want you can refer to that to access column
+# before the comma refers to rows, after the comma refers to columns
+
 df[,1]
 
+# if you want a certain range of rows or columns, you can use a colon
+df_2 <- df[1:10,1:2]
+
 #you could also use this notation to delete columns
-df <- df[,-2]
-df
+df_deleted <- df[,-2]
+df_deleted
 ```

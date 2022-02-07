@@ -1,6 +1,6 @@
 ---
 title: "Assignment 1: Introduction"
-author: "Student Name"
+author: "Megan Lundequam"
 output: pdf_document
 geometry: margin=2.54cm
 ---
@@ -23,14 +23,17 @@ The completed exercise is due on <>.
 1. What are your previous experiences with data analytics, R, and Git? Include both formal and informal training.
 
 > Answer: 
+My previous experience with data analytics and R is that which I gained through taking Applied Statistical Data Analytics with Betsy Albright in Fall 2020. I also worked with R a bit during Hydrology with Martin Doyle where we used R to analyze and present data in different ways. I gained additional data analytics experience in Economic Valuation of the Environment with Jeff Vincent, but using Stata. I have no prior experience using Git.
 
 2. Are there any components of the course about which you feel confident?
 
 > Answer: 
+I feel confident in my ability to learn and apply teachings to creating a strong foundation upon which I can explore the capabilities of R further.
 
 3. Are there any components of the course about which you feel apprehensive?
 
 > Answer: 
+Not really. I have heard that this course breaks down the endless capabilities of R really well, making the information digestable and equipping us with the tools to succeed. The only thing I am apprehensive about when it comes to data analytics in general is being confident in decisions I make about how to wrangle data, knowing there are so many possibilities, trusting that I have wrangled the data appropriately and then interpretting those results appropriately in order to form a conclusion about the data.
 
 
 ## 2) GitHub
@@ -38,5 +41,5 @@ The completed exercise is due on <>.
 Provide a link below to your forked course repository in GitHub. Make sure you have pulled all recent changes from the course repository  and that you have updated your course README file. 
 
 > Answer: 
-
+https://github.com/meganlundequam/Environmental_Data_Analytics_2022.git
 
