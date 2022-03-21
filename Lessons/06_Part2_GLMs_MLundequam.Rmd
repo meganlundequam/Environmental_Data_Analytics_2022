@@ -43,13 +43,13 @@ Litter.Totals <- Litter %>%
 
 summary(Litter.Totals)
 #check all value of plotID
-summary(Litter.Totals$plotID)
+summary(Litter.Totals$plotID) #shows this is not a balanced experiment
 
 # Test for normality. 
 # Note: the important assumption for GLMs is normality of residuals, 
 # not necessarily normality of raw data. See below when we plot the model.
 # shapiro.test() performs the Shapiro-Wilk test of the null that data follows a normal distribution
-
+#filtering to run each site location on dry mass
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_040"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_041"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_046"])
@@ -62,8 +62,10 @@ shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_062"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_063"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_064"])
 shapiro.test(Litter.Totals$dryMass[Litter.Totals$plotID == "NIWO_067"])
+# only 2 sites follow normal distribution - 
 
 #results: reject null in all except two: NIWO_057 and NIWO_046
+#Run Q-Q Plot - see it is not normal
 qqnorm(Litter.Totals$dryMass); qqline(Litter.Totals$dryMass)
 
 # Test for equal variance
@@ -80,6 +82,8 @@ summary(Litter.Totals.anova)
 #results: reject null hypothesis i.e. difference between a pair of group means is statiscally significant
 
 # Format ANOVA as lm
+# little bit more detailed - summary from aov object is traditional output - summary from lm will have one row for each categorical variable
+# the estimates are with respect to the intercept term
 Litter.Totals.anova2 <- lm(data = Litter.Totals, dryMass ~ plotID)
 summary(Litter.Totals.anova2)
 
@@ -88,10 +92,14 @@ summary(Litter.Totals.anova2)
 plot(Litter.Totals.anova2)
 
 # Post-hoc test
+# to find which differences between pairs of means are significant
 # TukeyHSD() computes Tukey Honest Significant Differences
+# calls the result of the anova test
 TukeyHSD(Litter.Totals.anova)
+#gives each difference of the means and then the p value for the multiple comparisons
 
 # Extract groupings for pairwise relationships
+#group=true means group similar means
 Litter.Totals.groups <- HSD.test(Litter.Totals.anova, "plotID", group = TRUE)
 Litter.Totals.groups
 
@@ -109,7 +117,7 @@ print(Litter.Totals.plot)
 
 What information does the output give us? How might we report this information in a report?
 
-> 
+> order them in the same order they are in in the output
 
 ## TWO-WAY ANOVA
 ### Main effects
@@ -152,8 +160,10 @@ TukeyHSD(Litter.anova.2way3)
 
 Litter.interaction <- with(Litter, interaction(functionalGroup, nlcdClass))
 
-#Litter.test <- cbind(Litter,Litter.interaction)
+Litter.test <- cbind(Litter,Litter.interaction)
 
+#comparing means for each of the 24 levels of mean interactions
+#onoe-way ANOVA is used because its interaction of two levels
 Litter.anova.2way5 <- aov(data = Litter, dryMass ~ Litter.interaction)
 
 Litter.groups <- HSD.test(Litter.anova.2way5, "Litter.interaction", group = TRUE)

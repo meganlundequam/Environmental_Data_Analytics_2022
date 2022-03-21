@@ -83,6 +83,7 @@ qqnorm(EPAair$Ozone); qqline(EPAair$Ozone)
 
 O3.onesample <- t.test(EPAair$Ozone, mu = 50, alternative = "less")
 O3.onesample
+# we are checking to see if our sample follows a normal distribution - if they do, they will follow this line. With the ends straying, we can tell that the tail is skewing. But this is not the only test - the shapiro test can also test - but sometimes the shapiro test can fail.
 
 Ozone.plot <- ggplot(EPAair, aes(x = Ozone)) +
   #geom_density(stat = "count", fill = "gray") +
@@ -192,10 +193,22 @@ For the NTL-LTER dataset, can we predict PM2.5 from Ozone?
 #Exercise 3: Run a linear regression PM2.5 by Ozone. Find the p-value and R-squared value. 
 
 
+PM2.5.Ozone.regression <- lm(data = EPAair, PM2.5 ~ Ozone)
+summary(PM2.5.Ozone.regression)
+
+# formula: y = 0.38x + 15.6
+# pvalue is < 0.5 so this is a good relation
+# r-squared is only 13% - means that these variables explain 13% of the variability of PM2.5 - they have a relationship, but only 13%
+# this tells us we need more variables in our regression to get a better explanation.
 
 #Exercise 4: Build a scatterplot. Add a line and standard error for the linear regression. 
 
-
+PM2.5byOzone <- 
+  ggplot(PM2.5.Ozone.regression, aes(x = Ozone, y = PM2.5)) +
+  ylim(0, 100) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "blue")
+print(PM2.5byOzone) 
 
 ```
 
@@ -208,15 +221,27 @@ What other variables can we add to improve model?
 
 #Exercise 5: Build correlation plots and identify more possible explanatory variables to add to the regression.
 
+#install.packages("corrplot")
+library(corrplot) # gives you correlation among any variable you have in dataframe
+PM2.5.other <- 
+  EPAair %>%
+  select(meanLat:Ozone) %>%
+  na.omit()
+EPAairCorr <- cor(PM2.5.other)
+corrplot(EPAairCorr, method = "ellipse")
 
-
+corrplot.mixed(EPAairCorr, upper = "ellipse")
 
 #Exercise 6: Choose a model by AIC in a Stepwise Algorithm. Do the results from AIC match the variables you selected on Exercise 5?
 
-
-
+OzonebyALL.regression <- lm(data = EPAair.subsample, PM2.5 ~ Ozone + Year + Month + meanLng + meanLat)
+step(OzonebyALL.regression) # lets you see which variables are good candidates
+# even though they might not show great correlation from the plot, they are adding something to the model
 
 #Exercise 7: Run another regression using the variables selected on Exercise 6. Compare r-squared value with the one from Exercise 5. 
+
+PM2.5.other.regression <- lm(data = EPAair, PM2.5 ~ Month + meanLat + meanLng + Ozone)
+summary(PM2.5.other.regression)
 
 ```
 
