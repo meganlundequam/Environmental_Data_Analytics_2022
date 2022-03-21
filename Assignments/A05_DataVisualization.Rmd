@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Data Visualization"
-author: "Student Name"
+author: "Megan Lundequam"
 output: pdf_document
 geometry: margin=2.54cm
 editor_options: 
@@ -33,16 +33,32 @@ the processed data file for the Niwot Ridge litter dataset (use the [`NEON_NIWO_
 
 ```{r}
 #1 
+getwd()
+library(tidyverse)
+library(cowplot)
 
+PeterPaul.chem.nutrients <- 
+  read.csv("../Data/Processed/NTL-LTER_Lake_Chemistry_Nutrients_PeterPaul_Processed.csv")
+Niwot.Ridge.Litter <- 
+  read.csv("../Data/Processed/NEON_NIWO_Litter_mass_trap_Processed.csv")
 #2 
-
+class(PeterPaul.chem.nutrients$sampledate)
+class(Niwot.Ridge.Litter$collectDate)
+PeterPaul.chem.nutrients$sampledate <- as.Date(
+  PeterPaul.chem.nutrients$sampledate, format = "%Y-%m-%d")
+Niwot.Ridge.Litter$collectDate <- as.Date(
+  Niwot.Ridge.Litter$collectDate, format = "%Y-%m-%d")
 ```
 ## Define your theme
 3. Build a theme and set it as your default theme.
 
 ```{r}
 #3
+A05theme <- theme_classic(base_size = 14) +
+  theme(axis.text = element_text(color = "black"), 
+        legend.position = "right")
 
+theme_set(A05theme)
 ```
 
 ## Create graphs
@@ -52,6 +68,13 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r}
 #4
+PhosphorusVPhosphate <- 
+  ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = po4, color = lakename)) +
+  geom_point() +
+  xlim(0, 150) +
+  ylim(0, 50) +
+  geom_smooth(method = lm, color = "black")
+print(PhosphorusVPhosphate)
 
 ```
 
@@ -60,12 +83,44 @@ For numbers 4-7, create ggplot graphs and adjust aesthetics to follow best pract
 
 ```{r}
 #5
+Tempplot <-
+  ggplot(PeterPaul.chem.nutrients, aes(x = as.factor(month), y = temperature_C)) +
+  geom_boxplot(aes(color = lakename))
+print(Tempplot)
+
+TPplot <-
+  ggplot(PeterPaul.chem.nutrients, aes(x = as.factor(month), y = tp_ug)) +
+  geom_boxplot(aes(color = lakename))
+print(TPplot)
+
+TNplot <-
+  ggplot(PeterPaul.chem.nutrients, aes(x = as.factor(month), y = tn_ug)) +
+  geom_boxplot(aes(color = lakename))
+print(TNplot)
+
+TempvTPvTN <- plot_grid(
+  Tempplot + theme(legend.position="none"), 
+  TPplot + theme(legend.position="none"), 
+  TNplot + theme(legend.position="none"), 
+  nrow = 3, align = 'v', axis = "l")
+print(TempvTPvTN)
+
+legend <- get_legend(
+  # create some space to the left of the legend
+  Tempplot + theme(legend.box.margin = margin(0, 1, 0, 1))
+)
+
+TempvTPvTN.legend <- plot_grid(TempvTPvTN, legend, 
+                               rel_widths = c(1, .4)
+                               )
+print(TempvTPvTN.legend)
 
 ```
 
 Question: What do you observe about the variables of interest over seasons and between lakes? 
 
 > Answer: 
+Peter Lake seems to have slightly higher TP and TN values compared to Paul Lake, but only slightly. However, Peter Lake appears to have outliers for TP and TN values that are higher than those for Paul Lake. Both lakes display almost identical temperature fluctuations with the temperatures increasing as May progresses to September, with September showing the highest mean temperatures compared to the other months. Despite temperature fluctuations, the boxplots do not depict a significant increase in TP or TN concentrations congruent with temperature changes, but perhaps a trend would be more visible if we were to zoom in on the data and thereby eliminate some of the outliers.
 
 6. [Niwot Ridge] Plot a subset of the litter dataset by displaying only the "Needles" functional group. Plot the dry mass of needle litter by date and separate by NLCD class with a color aesthetic. (no need to adjust the name of each land use)
 
@@ -73,11 +128,26 @@ Question: What do you observe about the variables of interest over seasons and b
 
 ```{r}
 #6
+Niwot.Litter.Needles <- 
+  ggplot(subset(Niwot.Ridge.Litter, functionalGroup == "Needles"), 
+         aes(x = collectDate, y = dryMass, color = nlcdClass)) + 
+  geom_point() +
+  scale_x_date(date_breaks = "2 months", date_labels = "%b %y") +
+  theme(axis.text.x = element_text(angle = 45,  hjust = 1))
+print(Niwot.Litter.Needles)
 
 #7
-
+Niwot.Litter.Needles.Faceted <- 
+  ggplot(subset(Niwot.Ridge.Litter, functionalGroup == "Needles"), 
+         aes(x = collectDate, y = dryMass)) + 
+  geom_point() +
+    scale_x_date(date_breaks = "2 months", date_labels = "%b %y") +
+  theme(axis.text.x = element_text(angle = 45,  hjust = 1)) +
+  facet_wrap(vars(nlcdClass), nrow = 3)
+print(Niwot.Litter.Needles.Faceted)
 
 ```
 Question: Which of these plots (6 vs. 7) do you think is more effective, and why? 
 
 > Answer:
+I think that the preferred plot depends on what you are trying to glean from the visualization. Plot 6 would be preferred if you are more focused on examining how all of the litter mass has changed over time with some insight into the spread of the different litter types compared to eachother, while Plot 7 (the faceted plot) is more effective for seeing values and spread for each individual litter type. Plot 6 makes it difficult to interpret any values for individual litter types whereas Plot 7, with the litter types separated out, is more effective for conveying individual litter data.
